@@ -1,3 +1,5 @@
+using TimeWellSpent.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +8,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IActivityRepository, ActivityRepository>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IMoodRepository, MoodRepository>();
+builder.Services.AddTransient<IWeekRepository, WeekRepository>();
 
 var app = builder.Build();
 

@@ -4,7 +4,7 @@ using TimeWellSpent.Models;
 
 namespace TimeWellSpent.Repositories
 {
-    public class ActivityRepository : BaseRepository
+    public class ActivityRepository : BaseRepository, IActivityRepository
     {
         public ActivityRepository(IConfiguration configuration) : base(configuration) { }
 
@@ -20,10 +20,10 @@ namespace TimeWellSpent.Repositories
                                         ,[name] as 'ActivityName'
                                         ,image
                                         FROM Activity";
-                    SqlDataReader reader= cmd.ExecuteReader();
+                    SqlDataReader reader = cmd.ExecuteReader();
                     List<Activity> activities = new();
 
-                    while (reader.Read()) 
+                    while (reader.Read())
                     {
                         activities.Add(new Activity()
                         {
@@ -62,7 +62,7 @@ namespace TimeWellSpent.Repositories
                         {
                             Id = DbUtils.GetInt(reader, "ActivityId"),
                             Name = DbUtils.GetString(reader, "ActivityName"),
-                            Image = DbUtils.GetString (reader, "image")
+                            Image = DbUtils.GetString(reader, "image")
                         };
                     }
                     reader.Close();
@@ -76,7 +76,7 @@ namespace TimeWellSpent.Repositories
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using(SqlCommand cmd = conn.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"INSERT INTO Activity
                                         ([name], image)
@@ -102,7 +102,7 @@ namespace TimeWellSpent.Repositories
                                         WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", activity.Id);
                     cmd.Parameters.AddWithValue("@name", activity.Name);
-                    cmd.Parameters.AddWithValue ("@image", activity.Image);
+                    cmd.Parameters.AddWithValue("@image", activity.Image);
                 }
             }
         }

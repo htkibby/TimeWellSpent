@@ -4,7 +4,7 @@ using TimeWellSpent.Models;
 
 namespace TimeWellSpent.Repositories
 {
-    public class CategoryRepository : BaseRepository
+    public class CategoryRepository : BaseRepository, ICategoryRepository
     {
         public CategoryRepository(IConfiguration configuration) : base(configuration) { }
 

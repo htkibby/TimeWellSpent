@@ -4,7 +4,7 @@ using TimeWellSpent.Models;
 
 namespace TimeWellSpent.Repositories
 {
-    public class WeekRepository : BaseRepository
+    public class WeekRepository : BaseRepository, IWeekRepository
     {
         public WeekRepository(IConfiguration configuration) : base(configuration) { }
 
@@ -29,7 +29,7 @@ namespace TimeWellSpent.Repositories
                         {
                             Id = DbUtils.GetInt(reader, "WeekId"),
                             StartDate = DbUtils.GetDateTime(reader, "WeekName"),
-                            EndDate = DbUtils.GetDateTime (reader, "EndDate")
+                            EndDate = DbUtils.GetDateTime(reader, "EndDate")
                         });
                     }
 
@@ -48,7 +48,8 @@ namespace TimeWellSpent.Repositories
                 {
                     cmd.CommandText = @"Select
                                         id AS 'WeekId'
-                                        ,[name] as 'WeekName'
+                                        ,startDate as 'StartDate'
+                                        ,endDate as 'EndDate'
                                         FROM Week
                                         WHERE id = @id";
                     cmd.Parameters.AddWithValue("id", id);
@@ -96,7 +97,7 @@ namespace TimeWellSpent.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Week SET
-                                        startDate = @name
+                                        startDate = @startDate
                                         ,endDate = @endDate
                                         WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", week.Id);
