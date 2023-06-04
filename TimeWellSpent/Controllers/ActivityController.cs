@@ -1,31 +1,43 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TimeWellSpent.Repositories;
 
 namespace TimeWellSpent.Controllers
 {
-    [Route("api/controller")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class UserRepository : Controller
+    public class ActivityController : Controller
     {
-        // GET: UserRepository
-        public ActionResult Index()
+        private readonly IActivityRepository _activityRepository;
+        public ActivityController(IActivityRepository activityRepository)
         {
-            return View();
+            _activityRepository= activityRepository;
         }
 
-        // GET: UserRepository/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public IActionResult GetAllActivities()
         {
-            return View();
+            return Ok(_activityRepository.GetAllActivities());
         }
 
-        // GET: UserRepository/Create
+        [HttpGet("{id}")]
+        public IActionResult GetActivityById(int id)
+        {
+            var activity = _activityRepository.GetActivityById(id);
+
+            if (activity is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(activity);
+        }
+
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: UserRepository/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -65,21 +77,6 @@ namespace TimeWellSpent.Controllers
         public ActionResult Delete(int id)
         {
             return View();
-        }
-
-        // POST: UserRepository/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }
