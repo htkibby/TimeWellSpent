@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using TimeWellSpent.Models;
 using TimeWellSpent.Repositories;
 
 namespace TimeWellSpent.Controllers
@@ -33,50 +33,44 @@ namespace TimeWellSpent.Controllers
             return Ok(activity);
         }
 
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+
+        public IActionResult InsertActivity(Activity activity)
         {
-            try
+            if (activity == null)
             {
-                return RedirectToAction(nameof(Index));
+                return BadRequest();
             }
-            catch
-            {
-                return View();
-            }
+
+            _activityRepository.InsertActivity(activity);
+            return Created("Activity created" + activity.Id, activity);
         }
 
-        // GET: UserRepository/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPut("{id}")]
+
+        public IActionResult UpdateActivity(int id, Activity activity)
         {
-            return View();
+            if (id != activity.Id)
+            {
+                return BadRequest();
+            }
+            _activityRepository.UpdateActivity(activity);
+            return NoContent();
         }
 
-        // POST: UserRepository/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        [HttpDelete("{id}")]
 
-        // GET: UserRepository/Delete/5
-        public ActionResult Delete(int id)
+        public IActionResult Delete(int id)
         {
-            return View();
+            var activity = _activityRepository.GetActivityById(id);
+
+            if (activity is null)
+            {
+                return NotFound();
+            }
+
+            _activityRepository.DeleteActivity(activity.Id);
+            return NoContent();
         }
     }
 }
