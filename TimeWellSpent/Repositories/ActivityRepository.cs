@@ -28,7 +28,7 @@ namespace TimeWellSpent.Repositories
                         activities.Add(new Activity()
                         {
                             Id = DbUtils.GetInt(reader, "ActivityId"),
-                            Name = DbUtils.GetString(reader, "Name"),
+                            Name = DbUtils.GetString(reader, "ActivityName"),
                             Image = DbUtils.GetString(reader, "image")
                         });
                     }
@@ -83,7 +83,7 @@ namespace TimeWellSpent.Repositories
                                         OUTPUT INSERTED.id
                                         VALUES (@name, @image)";
                     cmd.Parameters.AddWithValue("@name", activity.Name);
-                    cmd.Parameters.AddWithValue("image", activity.Image);
+                    cmd.Parameters.AddWithValue("@image", activity.Image);
                     activity.Id = (int)cmd.ExecuteScalar();
                 }
             }
