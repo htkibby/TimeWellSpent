@@ -28,7 +28,7 @@ namespace TimeWellSpent.Repositories
                         weeks.Add(new Week()
                         {
                             Id = DbUtils.GetInt(reader, "WeekId"),
-                            StartDate = DbUtils.GetDateTime(reader, "WeekName"),
+                            StartDate = DbUtils.GetDateTime(reader, "StartDate"),
                             EndDate = DbUtils.GetDateTime(reader, "EndDate")
                         });
                     }
@@ -61,7 +61,7 @@ namespace TimeWellSpent.Repositories
                         week = new Week()
                         {
                             Id = DbUtils.GetInt(reader, "WeekId"),
-                            StartDate = DbUtils.GetDateTime(reader, "WeekName"),
+                            StartDate = DbUtils.GetDateTime(reader, "StartDate"),
                             EndDate = DbUtils.GetDateTime(reader, "EndDate")
                         };
                     }
@@ -103,6 +103,7 @@ namespace TimeWellSpent.Repositories
                     cmd.Parameters.AddWithValue("@id", week.Id);
                     cmd.Parameters.AddWithValue("@startDate", week.StartDate);
                     cmd.Parameters.AddWithValue("@endDate", week.EndDate);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

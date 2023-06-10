@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.Data.SqlClient;
 using SpyDuhLakers.Utils;
 using TimeWellSpent.Models;
 
@@ -97,12 +98,13 @@ namespace TimeWellSpent.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Activity SET
-                                        name = @name
+                                        name = @name,
                                         image = @image
                                         WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", activity.Id);
                     cmd.Parameters.AddWithValue("@name", activity.Name);
                     cmd.Parameters.AddWithValue("@image", activity.Image);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

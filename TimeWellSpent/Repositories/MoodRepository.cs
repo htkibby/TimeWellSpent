@@ -28,7 +28,7 @@ namespace TimeWellSpent.Repositories
                         moods.Add(new Mood()
                         {
                             Id = DbUtils.GetInt(reader, "MoodId"),
-                            Name = DbUtils.GetString(reader, "Name"),
+                            Name = DbUtils.GetString(reader, "MoodName"),
                             Color = DbUtils.GetString(reader, "color")
                         });
                     }
@@ -97,12 +97,13 @@ namespace TimeWellSpent.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Mood SET
-                                        name = @name
+                                        name = @name,
                                         color = @color
                                         WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", mood.Id);
                     cmd.Parameters.AddWithValue("@name", mood.Name);
                     cmd.Parameters.AddWithValue("@color", mood.Color);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

@@ -8,7 +8,7 @@ namespace TimeWellSpent.Repositories
     {
         public CategoryRepository(IConfiguration configuration) : base(configuration) { }
 
-        public List<Category> GetAllActivities()
+        public List<Category> GetAllCategories()
         {
             using (SqlConnection conn = Connection)
             {
@@ -96,6 +96,7 @@ namespace TimeWellSpent.Repositories
                                         WHERE id = @id";
                     cmd.Parameters.AddWithValue("@id", activity.Id);
                     cmd.Parameters.AddWithValue("@name", activity.Name);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

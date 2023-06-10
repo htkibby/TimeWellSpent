@@ -55,7 +55,7 @@ namespace TimeWellSpent.Controllers
                 return BadRequest();
             }
             _activityRepository.UpdateActivity(activity);
-            return NoContent();
+            return Ok(activity);
         }
 
         [HttpDelete("{id}")]
