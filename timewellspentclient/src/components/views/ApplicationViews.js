@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom"
+import { Outlet, Route, Routes } from "react-router-dom"
+import { AllActivities } from "../activities/AllActivities"
 
 export const ApplicationViews = () => {
 
@@ -12,7 +13,7 @@ export const ApplicationViews = () => {
             </>
          }>
          </Route>
-         <Route path="activities"></Route>
+         <Route path="activities" element={<AllActivities />} />
       </Routes>
    )
 }
