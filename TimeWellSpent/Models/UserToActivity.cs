@@ -8,7 +8,7 @@ public class UserToActivity
     public int CategoryId { get; set; }
     public int MoodId { get; set; }
     public decimal HoursSpent { get; set; }
-    public DateOnly DateOccured { get; set; }
-    public string Description { get; set; }
+    public int WeekId { get; set; }
+    public string? Description { get; set; }
 
 }

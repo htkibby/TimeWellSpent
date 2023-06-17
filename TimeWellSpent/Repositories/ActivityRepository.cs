@@ -40,6 +40,68 @@ namespace TimeWellSpent.Repositories
             }
         }
 
+        public List<Activity> GetActivityByUser(string email)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"Select
+                                        u.id AS 'UserId'
+                                        ,u.[name] as 'UserName'
+                                        ,u.email AS 'UserEmail'
+                                        ,u.firebaseUid
+                                        ,uta.dateOccured
+                                        ,uta.[description]
+                                        ,uta.hoursSpent
+                                        ,m.[name] AS 'Mood'
+                                        ,m.color AS 'Mood Color'
+                                        ,c.[name] AS 'Category'
+                                        ,a.id AS 'ActualActivityId'
+                                        ,a.[name] AS 'Activity'
+                                        ,a.[image] AS 'Activity Image'
+                                        FROM Activity a
+                                        JOIN UserToActivity uta ON a.id = uta.activiyId
+                                        JOIN Mood m ON m.id = uta.moodId
+                                        JOIN Category c ON c.id = uta.categoryId
+                                        JOIN [User] u ON u.id = uta.userId
+                                        WHERE u.email = @email";
+                    cmd.Parameters.AddWithValue("email", email);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<Activity> activities = new();
+                    Activity activity = null;
+
+                    while (reader.Read())
+                    {
+                        activity= new Activity()
+                        {
+                            Id = DbUtils.GetInt(reader, "ActualActivityId"),
+                            Name = DbUtils.GetString(reader, "Activity"),
+                            Image = DbUtils.GetString(reader, "Activity Image"),
+                            User = new User()
+                            {
+                                Name = DbUtils.GetString(reader, "UserName"),
+                                Email = DbUtils.GetString(reader, "UserEmail")
+                            },
+                            Mood = new Mood()
+                            {
+                                Name = DbUtils.GetString(reader, "Mood"),
+                                Color = DbUtils.GetString(reader, "Mood Color")
+                            },
+                            Category = new Category()
+                            {
+                                Name = DbUtils.GetString(reader, "Category")
+                            }
+                        };
+                        activities.Add(activity);
+                    }
+                    conn.Close();
+                    return activities;
+                }
+            }
+        }
+
         public Activity GetActivityById(int id)
         {
             using (SqlConnection conn = Connection)

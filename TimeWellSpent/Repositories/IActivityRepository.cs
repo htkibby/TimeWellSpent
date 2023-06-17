@@ -6,6 +6,7 @@ namespace TimeWellSpent.Repositories
     {
         void DeleteActivity(int id);
         Activity GetActivityById(int id);
+        List<Activity> GetActivityByUser(string email);
         List<Activity> GetAllActivities();
         void InsertActivity(Activity activity);
         void UpdateActivity(Activity activity);

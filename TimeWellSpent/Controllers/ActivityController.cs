@@ -33,6 +33,19 @@ namespace TimeWellSpent.Controllers
             return Ok(activity);
         }
 
+        [HttpGet("user/{email}")]
+        public IActionResult GetActivityByUser(string email)
+        {
+            var activity = _activityRepository.GetActivityByUser(email);
+
+            if (activity is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(activity);
+        }
+
         [HttpPost]
 
         public IActionResult InsertActivity(Activity activity)

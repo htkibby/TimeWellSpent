@@ -13,6 +13,7 @@ builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IMoodRepository, MoodRepository>();
 builder.Services.AddTransient<IWeekRepository, WeekRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserToActivityRepository, UserToActivityRepository>();
 
 var app = builder.Build();
 

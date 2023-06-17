@@ -1,5 +1,6 @@
 import { Outlet, Route, Routes } from "react-router-dom"
 import { AllActivities } from "../activities/AllActivities"
+import { MyActivites } from "../activities/MyActivities"
 
 export const ApplicationViews = () => {
 
@@ -14,6 +15,7 @@ export const ApplicationViews = () => {
          }>
          </Route>
          <Route path="activities" element={<AllActivities />} />
+         <Route path="myactivities" element={<MyActivites />} />
       </Routes>
    )
 }
