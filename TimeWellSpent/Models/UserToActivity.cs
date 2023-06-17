@@ -10,5 +10,5 @@ public class UserToActivity
     public decimal HoursSpent { get; set; }
     public int WeekId { get; set; }
     public string? Description { get; set; }
-
+    public string? CreatedBy { get; set; }
 }

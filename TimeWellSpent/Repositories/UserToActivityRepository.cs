@@ -23,7 +23,8 @@ namespace TimeWellSpent.Repositories
 	                                        categoryId AS 'CategoryId',
 	                                        weekId AS 'WeekId',
 	                                        hoursSpent AS 'HoursSpent',
-	                                        [description] AS 'Description'
+	                                        [description] AS 'Description',
+                                            createdBy AS 'CreatedBy'
 	                                        FROM UserToActivity";
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<UserToActivity> joins = new();
@@ -39,7 +40,8 @@ namespace TimeWellSpent.Repositories
                             MoodId = DbUtils.GetInt(reader, "MoodId"),
                             WeekId = DbUtils.GetInt(reader, "WeeKId"),
                             Description = DbUtils.GetString(reader, "Description"),
-                            HoursSpent = DbUtils.GetDecimal(reader, "HoursSpent")
+                            HoursSpent = DbUtils.GetDecimal(reader, "HoursSpent"),
+                            CreatedBy = DbUtils.GetString(reader, "CreatedBy")
                         });
                     }
 
@@ -64,7 +66,8 @@ namespace TimeWellSpent.Repositories
 	                                        categoryId AS 'CategoryId',
 	                                        weekId AS 'WeekId',
 	                                        hoursSpent AS 'HoursSpent',
-	                                        [description] AS 'Description'
+	                                        [description] AS 'Description',
+                                            createdBy AS 'CreatedBy'
 	                                        FROM UserToActivity
                                         WHERE id = @id";
                     cmd.Parameters.AddWithValue("id", id);
@@ -82,7 +85,8 @@ namespace TimeWellSpent.Repositories
                             MoodId = DbUtils.GetInt(reader, "MoodId"),
                             WeekId = DbUtils.GetInt(reader, "WeeKId"),
                             Description = DbUtils.GetString(reader, "Description"),
-                            HoursSpent = DbUtils.GetDecimal(reader, "HoursSpent")
+                            HoursSpent = DbUtils.GetDecimal(reader, "HoursSpent"),
+                            CreatedBy = DbUtils.GetString(reader, "CreatedBy")
                         };
                     }
                     reader.Close();
@@ -105,9 +109,10 @@ namespace TimeWellSpent.Repositories
                                                     categoryId,
                                                     weekId,
                                                     hoursSpent,
+                                                    createdBy,
                                                     [description])
                                         OUTPUT INSERTED.id
-                                        VALUES (@userId, @activityId, @moodId, @categoryId, @weekId, @hoursSpent, @description)";
+                                        VALUES (@userId, @activityId, @moodId, @categoryId, @weekId, @hoursSpent, @createdBy, @description)";
                     cmd.Parameters.AddWithValue("@userId", join.UserId);
                     cmd.Parameters.AddWithValue("@activityId", join.ActivityId);
                     cmd.Parameters.AddWithValue("@moodId", join.MoodId);
@@ -115,6 +120,7 @@ namespace TimeWellSpent.Repositories
                     cmd.Parameters.AddWithValue("@weekId", join.WeekId);
                     cmd.Parameters.AddWithValue("@hoursSpent", join.HoursSpent);
                     cmd.Parameters.AddWithValue("@description", join.Description);
+                    cmd.Parameters.AddWithValue("@createdBy", join.CreatedBy);
                     join.Id = (int)cmd.ExecuteScalar();
                 }
             }

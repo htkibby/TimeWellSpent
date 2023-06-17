@@ -6,6 +6,12 @@ export const FetchActivities = async () => {
    return activities;
 }
 
+export const FetchActivityById = async (id) => {
+   const response = await fetch(`${apiUrl}/Activity/${id}`);
+   const activity = await response.json();
+   return activity;
+}
+
 export const FetchActivitiesByUserEmail = async (email) => {
    const response = await fetch(`${apiUrl}/Activity/user/${email}`);
    const activities = response.json();
@@ -30,6 +36,12 @@ export const FetchUsers = async () => {
    return users;
 }
 
+export const FetchUserById = async (id) => {
+   const response = await fetch(`${apiUrl}/User/${id}`);
+   const user = await response.json();
+   return user;
+}
+
 export const FetchWeeks = async () => {
    const response = await fetch(`${apiUrl}/Week`);
    const weeks = await response.json();
@@ -40,4 +52,36 @@ export const FetchCategories = async () => {
    const response = await fetch(`${apiUrl}/Category`);
    const categories = await response.json();
    return categories;
+}
+
+export const AddUta = async (utaObject) => {
+   const options = {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json"
+      },
+      body: JSON.stringify(utaObject)
+   };
+   await fetch (`${apiUrl}/UserToActivity`, options)
+};
+
+export const AddActivity = async (activityObject) => {
+   const options = {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json"
+      },
+      body: JSON.stringify(activityObject)
+   };
+   await fetch (`${apiUrl}/Activity`, options)
+};
+
+export const PutUta = async (utaObject) => {
+   await fetch (`${apiUrl}/${utaObject.id}`, {
+      method : "PUT",
+      headers : {
+         "Content=Type" : "application/json"
+      },
+      body : JSON.stringify(utaObject)
+   })
 }
