@@ -1,56 +1,37 @@
+import { useNavigate, useParams } from "react-router-dom";
+import { AddUta, FetchActivities, FetchActivityById, FetchCategories, FetchMoods, FetchUserToActivities, FetchUsers, FetchWeeks} from "../ApiManager";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AddActivity, AddUta, FetchActivities, FetchActivityById, FetchCategories, FetchMoods, FetchUserToActivities, FetchUsers, FetchWeeks } from "../ApiManager";
-import { Button, Col, Form, InputGroup, ModalDialog, Row } from "react-bootstrap";
+import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 
-export const CustomActivityForm = () => {
+export const ActivityDetails = () => {
+   const {activityDetailsId} = useParams();
    const localTimeUser = localStorage.getItem("capstone_user");
    const timeUserObject = JSON.parse(localTimeUser);
+   const [activityToEdit, setActivityToEdit] = useState({});
+   const [moodDefault, setMoodDefault] = useState({});
+   const [categoryDefault, setCategoryDefault] = useState({});
+   const [weekDefault, setWeekDefault] = useState({});
    const [moods, setMoods] = useState([]);
    const [categories, setCategories] = useState([]);
    const [weeks, setWeeks] = useState([]);
-   const [activities, setActivities] = useState([]);
    const [users, setUsers] = useState([]);
+   const [utas, setUtas] = useState([]);
+   const [correctUta, setCorrectUta] = useState({});
    const [currentUser, updateCurrentUser] = useState({
       id: 0,
       name: "",
       email: "",
       firebaseUid: ""
    });
-   const [uta, updateUta] = useState({
-      userId: 0,
-      activityId: 0,
-      categoryId: 0,
-      hoursSpent: 0,
-      moodId: 0,
-      createdBy : timeUserObject.uid,
-      dateOccured : new Date(),
-      description: "",
-      weekId: 0
-   });
-   const [customActivity, updateActivity] = useState({
-      name: "",
-      image: ""
-   });
    const navigate = useNavigate();
 
    useEffect(() => {
-      const fetchMoods = async () => {
-         const moodsFromApi = await FetchMoods();
-         setMoods(moodsFromApi);
-      };
-      fetchMoods()
-      console.log(moods)
-   }, []);
-
-   
-   useEffect(() => {
-      const fetchUsersFromApi = async () => {
-         const usersFromApi = await FetchUsers();
-         setUsers(usersFromApi);
-      };
-      fetchUsersFromApi()
-   }, []);
+      const getCustomActivity = async () => {
+         const activityToEditFromApi = await FetchActivityById(activityDetailsId);
+         setActivityToEdit(activityToEditFromApi);
+      }
+      getCustomActivity();
+   }, [activityDetailsId]);
 
    useEffect(() => {
       const makeCurrentUserWork = () => {
@@ -60,7 +41,46 @@ export const CustomActivityForm = () => {
          }
       }
       makeCurrentUserWork();
-   }, [users])
+   }, [users]);
+
+   useEffect(() => {
+      const getUtasFromAPI = async () => {
+         const utasFromApi = await FetchUserToActivities();
+         setUtas(utasFromApi);
+      }
+      getUtasFromAPI(); 
+   }, [])
+
+   // useEffect(() => {
+   //    if(utas.length > 0 && utas.ac) {
+   //       const filteredUta = utas.filter(uta => uta.activityId === parseInt(activityDetailsId));
+   //       setCorrectUta(filteredUta[0]);
+   //    }
+   // }, 
+   // [activityDetailsId, utas]);
+
+   useEffect(() => {
+      const fetchMoods = async () => {
+         const moodsFromApi = await FetchMoods();
+         setMoods(moodsFromApi);
+      };
+      fetchMoods()
+   }, []);
+
+   useEffect(() => {
+      if(moods.length > 0 && correctUta.id !== undefined) {
+         const moodForForm = moods.filter(mood => mood.id === correctUta.moodId)
+         setMoodDefault(moodForForm[0]);
+      }
+   }, [moods, correctUta])
+
+   useEffect(() => {
+      const fetchUsersFromApi = async () => {
+         const usersFromApi = await FetchUsers();
+         setUsers(usersFromApi);
+      };
+      fetchUsersFromApi()
+   }, []);
 
    useEffect(() => {
       const fetchCategories = async () => {
@@ -71,6 +91,13 @@ export const CustomActivityForm = () => {
    }, []);
 
    useEffect(() => {
+      if(categories.length > 0 && correctUta.id !== undefined) {
+         const categoryForForm = categories.filter(category => category.id === correctUta.categoryId)
+         setCategoryDefault(categoryForForm[0]);
+      }
+   }, [categories, correctUta])
+
+   useEffect(() => {
       const fetchWeeks = async () => {
          const weeksFromApi = await FetchWeeks();
          setWeeks(weeksFromApi);
@@ -79,9 +106,16 @@ export const CustomActivityForm = () => {
    }, []);
 
    useEffect(() => {
+      if(weeks.length > 0 && correctUta.id !== undefined) {
+         const weekForForm = weeks.filter(week => week.id === correctUta.weekId)
+         setWeekDefault(weekForForm[0]);
+      }
+   }, [weeks, correctUta]);
+
+   useEffect(() => {
       const getActivitiesFromApi = async () => {
          const ActivitesFromApi = await FetchActivities();
-         setActivities(ActivitesFromApi);
+         setActivityToEdit(ActivitesFromApi);
       }
       getActivitiesFromApi();
    }, []);
@@ -89,13 +123,9 @@ export const CustomActivityForm = () => {
    const handleSaveButtonClick = async (event) => {
       event.preventDefault();
 
-      AddActivity(customActivity);
-      const ActivitesFromApi = await FetchActivities();
-      setActivities(ActivitesFromApi);
-      const newActivity = activities.slice(-1);
-      uta.activityId = newActivity[0].id;
-      uta.userId = currentUser.id;
-      AddUta(uta);
+      correctUta.activityId = activityToEdit.id;
+      correctUta.userId = currentUser.id;
+      AddUta(correctUta);
       navigate("/myactivities");
    };
 
@@ -105,14 +135,15 @@ export const CustomActivityForm = () => {
         <Form.Group as={Col} controlId="formGridName">
           <Form.Label>Name of Activity</Form.Label>
           <Form.Control 
-          placeholder="Enter name of your Activity" 
-          value={customActivity.name}
+          placeholder="Enter name of your Activity"
+          disabled
+          readonly 
+          value={activityToEdit.name}
           onChange={
             (event) => {
-                const copy = {...customActivity}
+                const copy = {...activityToEdit}
                 copy.name = event.target.value
-                updateActivity(copy)
-                console.log(copy)
+                setActivityToEdit(copy)
             }
           } />
         </Form.Group>
@@ -121,12 +152,14 @@ export const CustomActivityForm = () => {
           <Form.Label>Activity Picture</Form.Label>
           <Form.Control 
           placeholder="URL here"
-          value={customActivity.image}
+          value={activityToEdit.image}
+          disabled
+          readonly
           onChange={
             (event) => {
-              const copy = {...customActivity}
+              const copy = {...activityToEdit}
               copy.image = event.target.value
-              updateActivity(copy)
+              setActivityToEdit(copy)
             }
           } />
           <Form.Text>
@@ -142,12 +175,14 @@ export const CustomActivityForm = () => {
             placeholder="Please write a short Description of the Activity..."
             id="descriptionBox"
             aria-label="Description"
-            value={uta.description}
+            disabled
+            readonly
+            value={correctUta.description}
             onChange={
                (event) => {
-                  const copy  = {...uta};
+                  const copy  = {...correctUta};
                   copy.description = event.target.value;
-                  updateUta(copy);
+                  setCorrectUta(copy);
                }
             }
          />
@@ -156,12 +191,15 @@ export const CustomActivityForm = () => {
       <Form.Group controlId="formGridMood">
         <Form.Label>Mood</Form.Label>
         <Form.Select
+        value={moodDefault.name}
+        disabled
+        readonly
           onChange={
             (event) => {
-              const copy = {...uta}
+              const copy = {...correctUta}
               const setmoodId = moods.find(mood => mood.name === event.target.value)
               copy.moodId = setmoodId.id         
-              updateUta(copy)
+              setCorrectUta(copy)
             }
           }
         >
@@ -179,13 +217,15 @@ export const CustomActivityForm = () => {
       <Form.Group controlId="formGridCategory">
         <Form.Label>Category</Form.Label>
         <Form.Select
+        value={categoryDefault.name}
+        disabled
+        readonly
           onChange={
             (event) => {
-              const copy = {...uta}
+              const copy = {...correctUta}
               const setcategoryId = categories.find(category => category.name === event.target.value)
               copy.categoryId = setcategoryId.id         
-              updateUta(copy)
-              console.log(uta)
+              setCorrectUta(copy)
             }
           }
         >
@@ -203,12 +243,15 @@ export const CustomActivityForm = () => {
       <Form.Group controlId="formGridWeek">
         <Form.Label>Week Start Date</Form.Label>
         <Form.Select
+        value={weekDefault.startDate}
+        disabled
+        readonly
           onChange={
             (event) => {
-              const copy = {...uta}
+              const copy = {...correctUta}
               const setweekId = weeks.find(week => week.startDate === event.target.value)
               copy.weekId = setweekId.id         
-              updateUta(copy)
+              setCorrectUta(copy)
 
             }
           }
@@ -225,7 +268,7 @@ export const CustomActivityForm = () => {
       </Form.Group>
   
       <Button variant="primary" type="submit" onClick={(clickEvent) => handleSaveButtonClick(clickEvent)}>
-        Submit
+        Save Activity to your Own Page
       </Button>
     </Form>
    )

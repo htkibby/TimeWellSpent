@@ -77,11 +77,27 @@ export const AddActivity = async (activityObject) => {
 };
 
 export const PutUta = async (utaObject) => {
-   await fetch (`${apiUrl}/${utaObject.id}`, {
+   await fetch (`${apiUrl}/UserToActivity/${utaObject.id}`, {
       method : "PUT",
       headers : {
-         "Content=Type" : "application/json"
+         "Content-Type" : "application/json"
       },
       body : JSON.stringify(utaObject)
+   })
+}
+
+export const PutActivity = async (activityObject) => {
+   await fetch (`${apiUrl}/Activity/${activityObject.id}`, {
+      method : "PUT",
+      headers : {
+         "Content-Type" : "application/json"
+      },
+      body : JSON.stringify(activityObject)
+   })
+}
+
+export const DeleteUTA = async (utaObject) => {
+   await fetch(`${apiUrl}/UserToActivity/${utaObject.id}`, {
+      method : "DELETE"
    })
 }

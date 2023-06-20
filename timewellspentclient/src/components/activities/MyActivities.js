@@ -36,7 +36,7 @@ export const MyActivites = () => {
                               />
                         </CardContent>
                         <CardActions>
-                           <Button size="small">Learn More</Button>
+                           <Button size="small" href={`/editactivity/${activity.id}`}>Edit Activity</Button>
                         </CardActions>
                      </Card>
                   </Grid>

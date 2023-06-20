@@ -59,7 +59,7 @@ namespace TimeWellSpent.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT 
-	                                        [id],
+	                                        [id] as 'UserToActivityId',
 	                                        userId AS 'UserId',
 	                                        activiyId AS 'ActivityId',
 	                                        moodId AS 'MoodId',
@@ -142,6 +142,7 @@ namespace TimeWellSpent.Repositories
                                         hoursSpent = @hoursSpent,
                                         [description] = @description
                                         WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", join.Id);
                     cmd.Parameters.AddWithValue("@userId", join.UserId);
                     cmd.Parameters.AddWithValue("@activityId", join.ActivityId);
                     cmd.Parameters.AddWithValue("@moodId", join.MoodId);
